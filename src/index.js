@@ -15,7 +15,6 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-
 // Req. 1
 app.get('/talker', async (_req, res) => {
   const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
@@ -35,7 +34,7 @@ app.get('/talker/:id', async (req, res) => {
   if (!talker) {
     return res.status(HTTP_BAD_REQUEST).send({ message: 'Pessoa palestrante não encontrada' });
   }
-  res.status(HTTP_OK_STATUS).send(talker);
+  res.status(HTTP_OK_STATUS).json(talker);
 });
 
 app.listen(PORT, () => {
