@@ -1,6 +1,9 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const generatedToken = require('./utils/createToken');
+const validateLogin = require('./middlewares/validateLogin');
+const validatePassword = require('./middlewares/validatePassword'); 
 
 const app = express();
 app.use(express.json());
@@ -35,6 +38,12 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(HTTP_BAD_REQUEST).send({ message: 'Pessoa palestrante não encontrada' });
   }
   res.status(HTTP_OK_STATUS).json(talkerF);
+});
+
+// Req. 3 e 4
+app.post('/login', validateLogin, validatePassword, (_req, res) => {
+  const token = generatedToken();
+  res.status(HTTP_OK_STATUS).json({ token });
 });
 
 app.listen(PORT, () => {
