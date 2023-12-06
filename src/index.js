@@ -30,11 +30,11 @@ app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
   const talkers = JSON.parse(talkersData);
-  const talker = talkers.find((talker) => talker.id === parseInt(id, 10));
-  if (!talker) {
+  const talkerF = talkers.find((talker) => talker.id === parseInt(id, 10));
+  if (!talkerF) {
     return res.status(HTTP_BAD_REQUEST).send({ message: 'Pessoa palestrante não encontrada' });
   }
-  res.status(HTTP_OK_STATUS).json(talker);
+  res.status(HTTP_OK_STATUS).json(talkerF);
 });
 
 app.listen(PORT, () => {
