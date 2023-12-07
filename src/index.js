@@ -71,22 +71,29 @@ app.post('/talker',
   });
 
 // Req. 6
-app.put('/talker/:id', authorization, validateName, validateAge, validateTalk, validateWatchedAt, validateRate, async (req, res) => {
-  const { id } = req.params;
-  const { name, age, talk } = req.body;
-  const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
-  const talkersList = JSON.parse(talkersData);
-  const talkerUpdate = talkersList.find((talker) => talker.id === +id);
-  if (!talkerUpdate) {
-    return res.status(HTTP_BAD_REQUEST).json({ message: 'Pessoa palestrante não encontrada' });
-  }
-  talkerUpdate.name = name;
-  talkerUpdate.age = age; 
-  talkerUpdate.talk = talk;
-  const newTalker = JSON.stringify(talkersList);
-  await fs.writeFile(TALKER_PATH, newTalker);
-  res.status(HTTP_OK_STATUS).json(talkerUpdate);
-});
+app.put('/talker/:id',
+  authorization,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+  async (req, res) => {
+    const { id } = req.params;
+    const { name, age, talk } = req.body;
+    const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
+    const talkersList = JSON.parse(talkersData);
+    const talkerUpdate = talkersList.find((talker) => talker.id === +id);
+    if (!talkerUpdate) {
+      return res.status(HTTP_BAD_REQUEST).json({ message: 'Pessoa palestrante não encontrada' });
+    }
+    talkerUpdate.name = name;
+    talkerUpdate.age = age; 
+    talkerUpdate.talk = talk;
+    const newTalker = JSON.stringify(talkersList);
+    await fs.writeFile(TALKER_PATH, newTalker);
+    res.status(HTTP_OK_STATUS).json(talkerUpdate);
+  });
 
 app.listen(PORT, () => {
   console.log('Online');
