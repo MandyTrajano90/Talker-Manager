@@ -17,6 +17,7 @@ app.use(express.json());
 const HTTP_OK_STATUS = 200;
 const HTTP_CREATED_STATUS = 201;
 const HTTP_BAD_REQUEST = 404;
+const HTTP_DELETE = 204;
 const PORT = process.env.PORT || '3001';
 const TALKER_PATH = path.join(__dirname, 'talker.json');
 
@@ -94,6 +95,18 @@ app.put('/talker/:id',
     await fs.writeFile(TALKER_PATH, newTalker);
     res.status(HTTP_OK_STATUS).json(talkerUpdate);
   });
+
+// Req. 7
+app.delete('/talker/:id', authorization, async (req, res) => {
+  const { id } = req.params;
+  const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
+  const talkerPosition = JSON.parse(talkersData);
+  talkerPosition.findIndex((talker) => talker.id === +id);
+  talkerPosition.splice(talkerPosition, 1);
+  const restOfTalkers = JSON.stringify(talkersData);
+  await fs.writeFile(TALKER_PATH, restOfTalkers);
+  res.status(HTTP_DELETE).end();
+});
 
 app.listen(PORT, () => {
   console.log('Online');
