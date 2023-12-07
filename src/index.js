@@ -4,11 +4,18 @@ const path = require('path');
 const generatedToken = require('./utils/createToken');
 const validateLogin = require('./middlewares/validateLogin');
 const validatePassword = require('./middlewares/validatePassword'); 
+const authorization = require('./middlewares/auth');
+const validateName = require('./middlewares/validateName');
+const validateAge = require('./middlewares/validateAge');
+const validateTalk = require('./middlewares/validateTalk');
+const validateWatchedAt = require('./middlewares/validateWatchedAt');
+const validateRate = require('./middlewares/validateRate');
 
 const app = express();
 app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
+const HTTP_CREATED_STATUS = 201;
 const HTTP_BAD_REQUEST = 404;
 const PORT = process.env.PORT || '3001';
 const TALKER_PATH = path.join(__dirname, 'talker.json');
@@ -45,6 +52,23 @@ app.post('/login', validateLogin, validatePassword, (_req, res) => {
   const token = generatedToken();
   res.status(HTTP_OK_STATUS).json({ token });
 });
+
+// Req. 5
+app.post('/talker',
+  authorization,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateRate,
+  validateWatchedAt, async (req, res) => {
+    const talkersData = await fs.readFile(TALKER_PATH, 'utf-8');
+    const talkersList = JSON.parse(talkersData);
+    const { name, age, talk } = req.body;
+    const newTalker = { id: talkersList.length + 1, name, age, talk };
+    talkersList.push(newTalker);
+    await fs.writeFile(TALKER_PATH, JSON.stringify(talkersList));
+    res.status(HTTP_CREATED_STATUS).json(newTalker);
+  });
 
 app.listen(PORT, () => {
   console.log('Online');
